@@ -2,12 +2,11 @@ package com.enscs.internship.models;
 
 import com.enscs.internship.core.User;
 
-import javafx.application.Application;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class Student extends User {
+    private static int id;
     private String major;
     private List<Application> applications; // Java Collections Framework requirement
 
@@ -30,4 +29,5 @@ public class Student extends User {
     public void addApplication(Application app) {
         this.applications.add(app);
     }
+    public int getId() { return id; }
 }
