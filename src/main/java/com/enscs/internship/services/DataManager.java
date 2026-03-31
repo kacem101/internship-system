@@ -73,12 +73,19 @@ public class DataManager {
     }
 
     private void saveToFile(String path, Object data) {
-        try (Writer writer = new FileWriter(path)) {
+    try (Writer writer = new FileWriter(path)) {
+        // Specify the type explicitly to force GSON to use the UserAdapter
+        java.lang.reflect.Type listType = new TypeToken<List<User>>(){}.getType();
+        
+        if (path.contains("users.json")) {
+            gson.toJson(data, listType, writer); // Force the User type
+        } else {
             gson.toJson(data, writer);
-        } catch (IOException e) {
-            e.printStackTrace();
         }
+    } catch (IOException e) {
+        e.printStackTrace();
     }
+}
 
     // --- Accessors ---
     public List<User> getUsers() { return users; }
@@ -110,15 +117,14 @@ public class DataManager {
     // This runs when you call saveData()
     @Override
     public JsonElement serialize(User src, java.lang.reflect.Type typeOfSrc, JsonSerializationContext context) {
-        // 1. Convert the object (Student or Supervisor) to a JsonObject
-        JsonObject result = context.serialize(src, src.getClass()).getAsJsonObject();
-        
-        // 2. MANUALLY add the class name as a "type" field
-        // This will save as "type": "Student" or "type": "Supervisor"
-        result.addProperty("type", src.getClass().getSimpleName());
-        
-        return result;
-    }
+    // Force GSON to use the actual class (Student/Supervisor) instead of the 'User' interface
+    JsonObject result = context.serialize(src, src.getClass()).getAsJsonObject();
+    
+    // Add the discriminator field
+    result.addProperty("type", src.getClass().getSimpleName());
+    
+    return result;
+}
 
     // This runs when you call loadData()
     @Override

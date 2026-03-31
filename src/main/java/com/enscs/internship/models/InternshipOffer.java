@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class InternshipOffer {
-    private static int OfferIdGenerator = 0;
+    private static int OfferIdGenerator = 1; // Start IDs at 1
     private int offerId;
     private String title;
     private String description;
@@ -12,51 +12,71 @@ public class InternshipOffer {
     private List<String> requirements;
     private boolean isOpen;
 
-    public InternshipOffer(int offerId, String title, String description, String companyName) {
-        this.offerId = offerId;
-        this.title = title;
-        this.description = description;
-        this.companyName = companyName;
+    /**
+     * 1. NO-ARGS CONSTRUCTOR
+     * Required by Gson to reconstruct objects from JSON without crashing.
+     */
+    public InternshipOffer() {
         this.requirements = new ArrayList<>();
-        this.isOpen = true; // Default to open upon creation
+        this.isOpen = true;
     }
-    public InternshipOffer(String title, String description, String companyName, String[] requirements) {
+
+    /**
+     * 2. PRIMARY CONSTRUCTOR (For manual creation in Supervisor Dashboard)
+     * Automatically assigns an ID using the static generator.
+     */
+    public InternshipOffer(String title, String description, String companyName) {
+        this(); // Calls the no-args constructor to init list/status
         this.offerId = OfferIdGenerator++;
         this.title = title;
         this.description = description;
         this.companyName = companyName;
-        this.requirements = new ArrayList<>();
-        for (String req : requirements) {
-            this.requirements.add(req.trim());
-        }
-        this.isOpen = true; // Default to open upon creation
-    }
-    // Methods to manage requirements
-    public void addRequirement(String req) {
-        this.requirements.add(req);
     }
 
-    // Standard Getters and Setters
+    /**
+     * 3. FULL CONSTRUCTOR (With requirements)
+     * Useful if you want to pass a pre-made list of strings.
+     */
+    public InternshipOffer(String title, String description, String companyName, List<String> requirements) {
+        this(title, description, companyName);
+        this.requirements = (requirements != null) ? requirements : new ArrayList<>();
+    }
+
+    // Methods to manage requirements
+    public void addRequirement(String req) {
+        if (req != null && !req.trim().isEmpty()) {
+            this.requirements.add(req.trim());
+        }
+    }
+
+    // Logic Methods
+    public void toggleStatus() {
+        this.isOpen = !this.isOpen;
+    }
+
+    // --- Standard Getters and Setters (Required for JavaFX PropertyValueFactory) ---
+    
     public int getOfferId() { return offerId; }
+    public void setOfferId(int offerId) { this.offerId = offerId; }
+
     public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
+
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
+
     public String getCompanyName() { return companyName; }
-    public boolean isOpen() { return isOpen; }
+    public void setCompanyName(String companyName) { this.companyName = companyName; }
+
     public List<String> getRequirements() { return requirements; }
+    public void setRequirements(List<String> requirements) { this.requirements = requirements; }
+
+    public boolean isOpen() { return isOpen; }
     public void setOpen(boolean open) { isOpen = open; }
 
     @Override
     public String toString() {
-        return String.format("[%d] %s at %s", offerId, title, companyName);
+        return String.format("[%d] %s at %s (%s)", 
+            offerId, title, companyName, isOpen ? "Open" : "Closed");
     }
-    /**
- * Toggles the status of the internship.
- * Useful for the Supervisor Dashboard.
- */
-public void toggleStatus() {
-    this.isOpen = !this.isOpen;
-}
-
-// Add these getters/setters if missing for GSON serialization
-public void setDescription(String description) { this.description = description; }
-public String getDescription() { return description; }
 }

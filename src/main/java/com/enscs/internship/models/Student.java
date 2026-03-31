@@ -14,6 +14,7 @@ public class Student extends User {
         super(id, first_name, last_name, username, email, password);
         this.major = major;
         this.applications = new ArrayList<>();
+        type = "STUDENT";
     }
 
     @Override

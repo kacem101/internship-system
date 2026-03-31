@@ -17,6 +17,9 @@ public void start(Stage stage) throws Exception {
     dataManager = new DataManager();
     authService = new AuthService(dataManager);
 
+    SessionManager.setDataManager(dataManager);
+    SessionManager.setAuthService(authService);
+    
     FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/login.fxml"));
     Parent root = loader.load();
 

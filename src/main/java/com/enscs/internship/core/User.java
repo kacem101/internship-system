@@ -9,7 +9,7 @@ public abstract class User implements Authenticatable {
     private String username;
     private String email;
     private String password;
-
+    protected String type; // "STUDENT" or "SUPERVISOR"
     public User(int id, String first_name, String last_name, String username, String email, String password) {
         this.app_id = id;
         this.first_name = first_name;

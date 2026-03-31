@@ -3,33 +3,44 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<HBox prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.enscs.internship.controllers.SupervisorController">
+<HBox prefHeight="700.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.enscs.internship.controllers.SupervisorController">
    <children>
-      <VBox prefWidth="200.0" style="-fx-background-color: #1a252f; -fx-padding: 20;">
+      <VBox prefWidth="220.0" style="-fx-background-color: #2c3e50; -fx-padding: 25;">
          <children>
-            <Label text="Admin Panel" textFill="WHITE">
-               <font><Font name="System Bold" size="18.0" /></font>
+            <Label text="Supervisor" textFill="WHITE">
+               <font><Font name="System Bold" size="20.0" /></font>
             </Label>
-            <Separator prefWidth="200.0" style="-fx-padding: 10 0;" />
-            <Button maxWidth="Infinity" style="-fx-background-color: transparent;" text="Manage Offers" textFill="WHITE" />
-            <Button maxWidth="Infinity" style="-fx-background-color: transparent;" text="Review Applicants" textFill="WHITE" />
+            <Label text="Control Panel" textFill="#bdc3c7" />
+            <Separator prefWidth="200.0" style="-fx-padding: 15 0;" />
+            <Button maxWidth="Infinity" style="-fx-background-color: transparent; -fx-alignment: CENTER_LEFT;" text="📁 Manage Offers" textFill="WHITE" />
+            <Button maxWidth="Infinity" style="-fx-background-color: transparent; -fx-alignment: CENTER_LEFT;" text="👥 Applicants" textFill="WHITE" />
             <Region VBox.vgrow="ALWAYS" />
-            <Button onAction="#handleLogout" maxWidth="Infinity" style="-fx-background-color: #c0392b;" text="Logout" textFill="WHITE" />
+            <Button onAction="#handleLogout" maxWidth="Infinity" style="-fx-background-color: #e74c3c;" text="Logout" textFill="WHITE" />
          </children>
       </VBox>
 
-      <VBox HBox.hgrow="ALWAYS" style="-fx-padding: 30;">
+      <VBox HBox.hgrow="ALWAYS" style="-fx-padding: 30; -fx-background-color: #f4f7f6;">
          <children>
-            <HBox alignment="CENTER_LEFT">
+            <HBox alignment="CENTER_LEFT" spacing="15">
                <children>
-                  <Label text="Active Internship Offers" HBox.hgrow="ALWAYS">
-                     <font><Font size="24.0" /></font>
-                  </Label>
+                  <VBox>
+                     <children>
+                        <Label text="Internship Listings" style="-fx-font-weight: bold;">
+                           <font><Font size="26.0" /></font>
+                        </Label>
+                        <Label text="View and manage current postings" textFill="#7f8c8d" />
+                     </children>
+                  </VBox>
                   <Region HBox.hgrow="ALWAYS" />
-                  <Button onAction="#showAddOfferDialog" style="-fx-background-color: #2980b9;" text="+ New Offer" textFill="WHITE" />
+                  <TextField fx:id="searchField" onKeyReleased="#handleSearch" prefWidth="200.0" promptText="Search title/company..." style="-fx-background-radius: 15;" />
+                  <ComboBox fx:id="filterComboBox" onAction="#handleFilterChange" prefWidth="150.0" promptText="Filter view" />
+                  <Button onAction="#showAddOfferDialog" style="-fx-background-color: #27ae60; -fx-background-radius: 5;" text="+ Create Offer" textFill="WHITE">
+                     <font><Font name="System Bold" size="13.0" /></font>
+                  </Button>
                </children>
             </HBox>
-            <ListView fx:id="offersListView" VBox.vgrow="ALWAYS" style="-fx-margin-top: 20;" />
+            
+            <ListView fx:id="offersListView" VBox.vgrow="ALWAYS" style="-fx-background-radius: 10; -fx-margin-top: 20; -fx-border-color: #dcdde1;" />
          </children>
       </VBox>
    </children>

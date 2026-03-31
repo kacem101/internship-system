@@ -7,11 +7,11 @@ import java.util.List;
 public class Supervisor extends User {
     private String companyName;
     private List<InternshipOffer> postedOffers;
-
     public Supervisor(int id, String first_name, String last_name, String username, String email, String password, String companyName) {
         super(id, first_name, last_name, username, email, password);
         this.companyName = companyName;
         this.postedOffers = new ArrayList<>();
+        type = "SUPERVISOR";
     }
 
     @Override

@@ -1,1 +1,22 @@
-[]
+[
+  {
+    "offerId": 1,
+    "title": "sss",
+    "description": "sssss",
+    "companyName": "aa",
+    "requirements": [
+      "dsdsds,kkhjhj,kkk"
+    ],
+    "isOpen": true
+  },
+  {
+    "offerId": 2,
+    "title": "hello",
+    "description": "nothinh",
+    "companyName": "ss",
+    "requirements": [
+      "sss,kkk,iii"
+    ],
+    "isOpen": true
+  }
+]

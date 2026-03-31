@@ -77,10 +77,17 @@ public class DashboardController {
     }
 
     @FXML
-    public void handleViewApplications() {
-        loadView("applications_list.fxml");
-        // Logic for ApplicationsController goes here once implemented
+public void handleViewApplications() {
+    try {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/applications_list.fxml"));
+        Parent view = loader.load();
+        
+        // Clear the current view and show the applications table
+        contentArea.getChildren().setAll(view);
+    } catch (IOException e) {
+        showError("UI Error", "Could not load applications list", e.getMessage());
     }
+}
 
     @FXML
     public void handleLogout() {
