@@ -44,4 +44,8 @@ public class AuthService {
     public User getCurrentUser() { return currentUser.get(); }
 
     public boolean isAuthenticated() { return currentUser.get() != null; }
+
+    public Object getDataManager() {
+        return dataManager;
+    }
 }

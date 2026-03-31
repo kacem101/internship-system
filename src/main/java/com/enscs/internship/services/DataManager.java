@@ -1,116 +1,149 @@
 package com.enscs.internship.services;
 
-import com.enscs.internship.models.*;
 import com.enscs.internship.core.User;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.enscs.internship.models.*;
+import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
-
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 public class DataManager {
-    private List<User> users;
-    private List<InternshipOffer> offers;
-    private List<Application> allApplications;
-    private final String USER_FILE = "src/main/resources/data/users.json";
-    private final String OFFER_FILE = "src/main/resources/data/offers.json";
-    private final String APPLICATION_FILE = "src/main/resources/data/applications.json";
+    private List<User> users = new ArrayList<>();
+    private List<InternshipOffer> offers = new ArrayList<>();
+    private List<Application> applications = new ArrayList<>();
+    
+    private final String DATA_PATH = "src/main/resources/data/";
     private final Gson gson;
 
     public DataManager() {
-        // GsonBuilder with setPrettyPrinting makes the JSON files readable for your report
-        this.gson = new GsonBuilder().setPrettyPrinting().create();
-        this.users = new ArrayList<>();
-        this.offers = new ArrayList<>();
+        // 1. Create the Directory if it doesn't exist
+        File directory = new File(DATA_PATH);
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+
+        // 2. Configure GSON with Adapters
+        this.gson = new GsonBuilder()
+            .setPrettyPrinting()
+            // Fix for LocalDate (InaccessibleObjectException)
+            .registerTypeAdapter(LocalDate.class, (JsonSerializer<LocalDate>) (src, typeOfSrc, context) -> 
+                new JsonPrimitive(src.format(DateTimeFormatter.ISO_LOCAL_DATE)))
+            .registerTypeAdapter(LocalDate.class, (JsonDeserializer<LocalDate>) (json, typeOfT, context) -> 
+                LocalDate.parse(json.getAsString(), DateTimeFormatter.ISO_LOCAL_DATE))
+            // Support for Polymorphism (Student vs Supervisor)
+            .registerTypeAdapter(User.class, new UserAdapter()) 
+            .create();
+
         loadData();
     }
 
-    // --- Persistence Logic ---
+    public void loadData() {
+        users = loadFile(DATA_PATH + "users.json", new TypeToken<List<User>>(){}.getType());
+        offers = loadFile(DATA_PATH + "offers.json", new TypeToken<List<InternshipOffer>>(){}.getType());
+        applications = loadFile(DATA_PATH + "applications.json", new TypeToken<List<Application>>(){}.getType());
+    }
+
+    private <T> List<T> loadFile(String path, java.lang.reflect.Type type) {
+    File file = new File(path);
+
+    // FIX 1: If the file doesn't exist OR is empty, don't let Gson touch it!
+    if (!file.exists() || file.length() == 0) {
+        System.out.println("File is empty or missing: " + path + ". Initializing empty list.");
+        return new ArrayList<>();
+    }
+
+    try (Reader reader = new FileReader(file)) {
+        // FIX 2: Parse the file
+        List<T> list = gson.fromJson(reader, type);
+        
+        // Ensure we return a real list even if the file had "null" written in it
+        return list != null ? list : new ArrayList<>();
+    } catch (IOException | JsonSyntaxException e) {
+        System.err.println("Error reading " + path + ": " + e.getMessage());
+        return new ArrayList<>();
+    }
+}
 
     public void saveData() {
-        try (Writer userWriter = new FileWriter(USER_FILE);
-             Writer offerWriter = new FileWriter(OFFER_FILE);
-             Writer applicationWriter = new FileWriter(APPLICATION_FILE)) {
-            
-            gson.toJson(users, userWriter);
-            gson.toJson(offers, offerWriter);
-            gson.toJson(allApplications, applicationWriter);
-            System.out.println("Data saved successfully to JSON.");
-            
-        } catch (IOException e) {
-            System.err.println("Error saving data: " + e.getMessage());
-        }
+        saveToFile(DATA_PATH + "users.json", users);
+        saveToFile(DATA_PATH + "offers.json", offers);
+        saveToFile(DATA_PATH + "applications.json", applications);
     }
 
-    private void loadData() {
-        try (Reader userReader = new FileReader(USER_FILE)) {
-            // Note: Gson needs a TypeToken to handle List<User> correctly
-            users = gson.fromJson(userReader, new TypeToken<List<User>>(){}.getType());
-            if (users == null) users = new ArrayList<>();
-        } catch (FileNotFoundException e) {
-            System.out.println("No existing user data found. Starting fresh.");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try (Reader offerReader = new FileReader(OFFER_FILE)) {
-            offers = gson.fromJson(offerReader, new TypeToken<List<InternshipOffer>>(){}.getType());
-            if (offers == null) offers = new ArrayList<>();
-        } catch (FileNotFoundException e) {
-            System.out.println("No existing offer data found. Starting fresh.");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try (Reader applicationReader = new FileReader(APPLICATION_FILE)) {
-            allApplications = gson.fromJson(applicationReader, new TypeToken<List<Application>>(){}.getType());
-            if (allApplications == null) allApplications = new ArrayList<>();
-        } catch (FileNotFoundException e) {
-            System.out.println("No existing application data found. Starting fresh.");
+    private void saveToFile(String path, Object data) {
+        try (Writer writer = new FileWriter(path)) {
+            gson.toJson(data, writer);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    // --- Collections Logic ---
+    // --- Accessors ---
+    public List<User> getUsers() { return users; }
+    public List<InternshipOffer> getOffers() { return offers; }
+    public List<Application> getApplications() { return applications; }
 
-    public void addUser(User user) {
-        users.add(user);
-        saveData(); // Auto-save on change
+    public void addUser(User u) { 
+        if (getUserByUsername(u.getUsername()) == null) {
+            users.add(u); 
+            saveData(); 
+        }
     }
 
-    public List<InternshipOffer> getAllOffers() {
-        return offers;
-    }
-
+    public void addOffer(InternshipOffer o) { offers.add(o); saveData(); }
+    public void addApplication(Application a) { applications.add(a); saveData(); }
+    
     public User getUserByUsername(String username) {
         return users.stream()
-                    .filter(u -> u.getUsername().equalsIgnoreCase(username))
-                    .findFirst()
-                    .orElse(null);
-    }
-    public void addOffer(InternshipOffer offer) {
-        offers.add(offer);
-        saveData();
-    }
-    public void addApplication(Application app) {
-        allApplications.add(app);
-        saveData();
-    }
-    public List<Application> getAllApplications() {
-        return allApplications;
-    }
-    public Application getApplicationById(int appId) {
-        return allApplications.stream()
-                .filter(app -> app.getApplicationId() == appId)
+                .filter(u -> u.getUsername().equalsIgnoreCase(username))
                 .findFirst()
                 .orElse(null);
     }
-    public void updateApplication(Application app) {
-        Application existingApp = getApplicationById(app.getApplicationId());
-        if (existingApp != null) {
-            existingApp.setStatus(app.getStatus());
-            saveData();
+
+    /**
+     * Internal helper to tell GSON how to distinguish between Student and Supervisor
+     */
+    private static class UserAdapter implements JsonSerializer<User>, JsonDeserializer<User> {
+    
+    // This runs when you call saveData()
+    @Override
+    public JsonElement serialize(User src, java.lang.reflect.Type typeOfSrc, JsonSerializationContext context) {
+        // 1. Convert the object (Student or Supervisor) to a JsonObject
+        JsonObject result = context.serialize(src, src.getClass()).getAsJsonObject();
+        
+        // 2. MANUALLY add the class name as a "type" field
+        // This will save as "type": "Student" or "type": "Supervisor"
+        result.addProperty("type", src.getClass().getSimpleName());
+        
+        return result;
+    }
+
+    // This runs when you call loadData()
+    @Override
+    public User deserialize(JsonElement json, java.lang.reflect.Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+        JsonObject jsonObject = json.getAsJsonObject();
+        
+        // 3. Look for the "type" field we saved earlier
+        JsonElement typeElement = jsonObject.get("type");
+        
+        // Safety Check: If type is missing, we can't crash! 
+        // We default to Student for your NSCS project.
+        if (typeElement == null || typeElement.isJsonNull()) {
+            return context.deserialize(json, Student.class);
         }
+
+        String type = typeElement.getAsString();
+        
+        // 4. Use the type to recreate the correct object
+        if ("Student".equalsIgnoreCase(type)) {
+            return context.deserialize(json, Student.class);
+        } else if ("Supervisor".equalsIgnoreCase(type)) {
+            return context.deserialize(json, Supervisor.class);
+        } else {
+            throw new JsonParseException("Unknown User type: " + type);
+        }
+    }
     }
 }

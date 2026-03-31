@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox spacing="15.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.enscs.internship.controllers.OfferListController">
+    <padding>
+        <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
+    </padding>
+    
+    <Label style="-fx-font-size: 20; -fx-font-weight: bold;" text="Available Internship Offers" />
+    
+    <TableView fx:id="table" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="titleCol" prefWidth="250.0" text="Position Title" />
+            <TableColumn fx:id="companyCol" prefWidth="200.0" text="Company" />
+            <TableColumn fx:id="statusCol" prefWidth="100.0" text="Status" />
+        </columns>
+    </TableView>
+    
+    <HBox alignment="CENTER_RIGHT" spacing="10.0">
+        <Button onAction="#handleApply" prefWidth="120.0" style="-fx-background-color: #3498db; -fx-text-fill: white;" text="Apply Now" />
+    </HBox>
+</VBox>

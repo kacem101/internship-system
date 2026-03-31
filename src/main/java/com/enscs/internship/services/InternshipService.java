@@ -3,6 +3,7 @@ package com.enscs.internship.services;
 import com.enscs.internship.models.*;
 import com.enscs.internship.exceptions.InternshipException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class InternshipService {
     private final DataManager dataManager;
@@ -11,35 +12,26 @@ public class InternshipService {
         this.dataManager = dataManager;
     }
 
-    /**
-     * Logic for a student applying to an offer.
-     * Must check if offer is open and if student already applied.
-     */
-    public void applyForInternship(Student student, InternshipOffer offer) throws InternshipException {
-        if (!offer.isOpen()) {
-            throw new InternshipException("Cannot apply: Offer is closed.");
-        }
-        for (Application app : student.getApplications()) {
-            if (app.getOfferId() == offer.getOfferId()) {
-                throw new InternshipException("Cannot apply: Already applied to this offer.");
-            }
-        }
-        Application newApp = new Application(Application.getNextApplicationId(), student.getId(), offer.getOfferId());
-        student.addApplication(newApp);
-        dataManager.addApplication(newApp);
+    public void apply(Student student, InternshipOffer offer) throws InternshipException {
+        if (!offer.isOpen()) throw new InternshipException("Offer is closed.");
+        
+        boolean duplicate = student.getApplications().stream()
+                .anyMatch(a -> a.getOfferId() == offer.getOfferId());
+        
+        if (duplicate) throw new InternshipException("Already applied!");
+
+        Application app = new Application(Application.getNextApplicationId(), student.getAppId(), offer.getOfferId());
+        student.addApplication(app);
+        dataManager.addApplication(app);
+        dataManager.saveData();
     }
 
-
-    /**
-     * Logic for a supervisor to update application status.
-     */
-    public void updateApplicationStatus(Application app, ApplicationStatus newStatus) {
-        app.setStatus(newStatus);
-        dataManager.updateApplication(app);
+    public List<InternshipOffer> getActiveOffers() {
+        return dataManager.getOffers().stream().filter(InternshipOffer::isOpen).collect(Collectors.toList());
     }
-
-    /**
-     * Returns a filtered list of open internships.
-     */
-    public List<InternshipOffer> getAvailableOffers() { return dataManager.getAllOffers(); }
+    public boolean saveOffer(InternshipOffer offer) {
+        dataManager.addOffer(offer);
+        dataManager.saveData();
+        return true;
+    }
 }

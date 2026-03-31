@@ -12,25 +12,30 @@ public class Main extends Application {
     private DataManager dataManager;
     private AuthService authService;
 
-    @Override
-    public void start(Stage primaryStage) throws Exception {
-        // 1. Initialize Services
-        dataManager = new DataManager();
-        authService = new AuthService(dataManager);
+   @Override
+public void start(Stage stage) throws Exception {
+    dataManager = new DataManager();
+    authService = new AuthService(dataManager);
 
-        // 2. Load UI
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/login.fxml"));
-        Parent root = loader.load();
+    FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/login.fxml"));
+    Parent root = loader.load();
 
-        // 3. Inject Service into Controller
-        LoginController controller = loader.getController();
-        controller.setAuthService(authService);
+    // Set a modern aspect ratio: 1024 width, 700 height
+    Scene scene = new Scene(root, 1024, 700);
+    
+    // Inject service into Login controller
+    LoginController controller = loader.getController();
+    controller.setAuthService(authService);
 
-        // 4. Show Window
-        primaryStage.setTitle("ENSCS Internship Management");
-        primaryStage.setScene(new Scene(root, 400, 300));
-        primaryStage.show();
-    }
+    stage.setTitle("ENSCS Internship Management System");
+    stage.setScene(scene);
+    
+    // Prevent the app from being resized too small
+    stage.setMinWidth(900);
+    stage.setMinHeight(650);
+    
+    stage.show();
+}
 
     public static void main(String[] args) {
         launch(args);

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<HBox prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.enscs.internship.controllers.SupervisorController">
+   <children>
+      <VBox prefWidth="200.0" style="-fx-background-color: #1a252f; -fx-padding: 20;">
+         <children>
+            <Label text="Admin Panel" textFill="WHITE">
+               <font><Font name="System Bold" size="18.0" /></font>
+            </Label>
+            <Separator prefWidth="200.0" style="-fx-padding: 10 0;" />
+            <Button maxWidth="Infinity" style="-fx-background-color: transparent;" text="Manage Offers" textFill="WHITE" />
+            <Button maxWidth="Infinity" style="-fx-background-color: transparent;" text="Review Applicants" textFill="WHITE" />
+            <Region VBox.vgrow="ALWAYS" />
+            <Button onAction="#handleLogout" maxWidth="Infinity" style="-fx-background-color: #c0392b;" text="Logout" textFill="WHITE" />
+         </children>
+      </VBox>
+
+      <VBox HBox.hgrow="ALWAYS" style="-fx-padding: 30;">
+         <children>
+            <HBox alignment="CENTER_LEFT">
+               <children>
+                  <Label text="Active Internship Offers" HBox.hgrow="ALWAYS">
+                     <font><Font size="24.0" /></font>
+                  </Label>
+                  <Region HBox.hgrow="ALWAYS" />
+                  <Button onAction="#showAddOfferDialog" style="-fx-background-color: #2980b9;" text="+ New Offer" textFill="WHITE" />
+               </children>
+            </HBox>
+            <ListView fx:id="offersListView" VBox.vgrow="ALWAYS" style="-fx-margin-top: 20;" />
+         </children>
+      </VBox>
+   </children>
+</HBox>

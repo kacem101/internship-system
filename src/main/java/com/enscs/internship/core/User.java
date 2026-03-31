@@ -1,5 +1,6 @@
 package com.enscs.internship.core;
 
+import org.mindrot.jbcrypt.BCrypt;
 
 public abstract class User implements Authenticatable {
     private final int app_id;
@@ -23,7 +24,7 @@ public abstract class User implements Authenticatable {
 
     @Override
     public boolean login(String username, String password) {
-        return this.username.equals(username) && this.password.equals(password);
+        return this.username.equals(username) && BCrypt.checkpw(password, this.password);
     }
 
     @Override
