@@ -2,97 +2,104 @@ package com.enscs.internship.models;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+import java.util.UUID;
 
 public class InternshipOffer {
-    private static int OfferIdGenerator = 1; // Start IDs at 1
+
+    // ------------------------------------------------------------------ //
+    //  FIX: Use a UUID-derived int instead of a static counter.           //
+    //  A static counter resets to 1 every app launch, so loaded offers    //
+    //  from JSON get IDs that collide with newly created ones.            //
+    // ------------------------------------------------------------------ //
     private int offerId;
     private String title;
     private String description;
     private String companyName;
     private List<String> requirements;
-    private boolean isOpen;
     private List<String> tags;
+    private boolean isOpen;
+
     /**
-     * 1. NO-ARGS CONSTRUCTOR
-     * Required by Gson to reconstruct objects from JSON without crashing.
+     * No-args constructor — required by Gson to deserialise from JSON.
+     * Initialises all list fields so nothing is ever null after load.
      */
     public InternshipOffer() {
         this.requirements = new ArrayList<>();
-        this.isOpen = true;
+        this.tags         = new ArrayList<>();
+        this.isOpen       = true;
     }
 
     /**
-     * 2. PRIMARY CONSTRUCTOR (For manual creation in Supervisor Dashboard)
-     * Automatically assigns an ID using the static generator.
+     * Primary constructor used when a Supervisor creates a new offer.
+     * Generates a collision-safe ID from a UUID hash so it stays unique
+     * even after the application is restarted and old offers are loaded
+     * from JSON.
      */
     public InternshipOffer(String title, String description, String companyName) {
-        this(); // Calls the no-args constructor to init list/status
-        this.offerId = OfferIdGenerator++;
-        this.title = title;
-        this.description = description;
-        this.companyName = companyName;
-    }
-    public InternshipOffer(String title, String description, String company, 
-                           List<String> requirements, List<String> tags) {
-        this.offerId = new Random().nextInt(10000);
-        this.title = title;
-        this.description = description;
-        this.companyName = company;
-        this.requirements = requirements;
-        this.tags = tags;
+        this();                                       // init lists + isOpen
+        // Positive, bounded int derived from UUID — no static state needed
+        this.offerId      = Math.abs(UUID.randomUUID().hashCode()) % 1_000_000 + 1;
+        this.title        = title;
+        this.description  = description;
+        this.companyName  = companyName;
     }
 
-    // Add Getters and Setters for tags
-    public List<String> getTags() { return tags; }
     /**
-     * 3. FULL CONSTRUCTOR (With requirements)
-     * Useful if you want to pass a pre-made list of strings.
+     * Full constructor — title, description, company + requirements + tags.
+     * Used by PostOfferController in both CREATE and EDIT modes.
      */
-    public InternshipOffer(String title, String description, String companyName, List<String> requirements) {
+    public InternshipOffer(String title, String description, String companyName,
+                           List<String> requirements, List<String> tags) {
         this(title, description, companyName);
+        if (requirements != null) this.requirements = requirements;
+        if (tags         != null) this.tags         = tags;
+    }
+
+    // ------------------------------------------------------------------ //
+    //  Convenience helpers                                                 //
+    // ------------------------------------------------------------------ //
+
+    public void addRequirement(String req) {
+        if (req != null && !req.trim().isEmpty()) requirements.add(req.trim());
+    }
+
+    public void addTag(String tag) {
+        if (tag != null && !tag.trim().isEmpty()) tags.add(tag.trim());
+    }
+
+    public void toggleStatus() { this.isOpen = !this.isOpen; }
+
+    // ------------------------------------------------------------------ //
+    //  Getters & setters (JavaFX PropertyValueFactory needs these)        //
+    // ------------------------------------------------------------------ //
+
+    public int    getOfferId()    { return offerId; }
+    public void   setOfferId(int offerId) { this.offerId = offerId; }
+
+    public String getTitle()      { return title; }
+    public void   setTitle(String title) { this.title = title; }
+
+    public String getDescription() { return description; }
+    public void   setDescription(String description) { this.description = description; }
+
+    public String getCompanyName() { return companyName; }
+    public void   setCompanyName(String companyName) { this.companyName = companyName; }
+
+    public List<String> getRequirements() { return requirements; }
+    public void setRequirements(List<String> requirements) {
         this.requirements = (requirements != null) ? requirements : new ArrayList<>();
     }
 
-    // Methods to manage requirements
-    public void addRequirement(String req) {
-        if (req != null && !req.trim().isEmpty()) {
-            this.requirements.add(req.trim());
-        }
+    public List<String> getTags() { return tags; }
+    public void setTags(List<String> tags) {
+        this.tags = (tags != null) ? tags : new ArrayList<>();
     }
-
-    // Logic Methods
-    public void toggleStatus() {
-        this.isOpen = !this.isOpen;
-    }
-
-    // --- Standard Getters and Setters (Required for JavaFX PropertyValueFactory) ---
-    
-    public int getOfferId() { return offerId; }
-    public void setOfferId(int offerId) { this.offerId = offerId; }
-
-    public String getTitle() { return title; }
-    public void setTitle(String title) { this.title = title; }
-
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
-
-    public String getCompanyName() { return companyName; }
-    public void setCompanyName(String companyName) { this.companyName = companyName; }
-
-    public List<String> getRequirements() { return requirements; }
-    public void setRequirements(List<String> requirements) { this.requirements = requirements; }
 
     public boolean isOpen() { return isOpen; }
-    public void setOpen(boolean open) { isOpen = open; }
+    public void    setOpen(boolean open) { isOpen = open; }
 
     @Override
     public String toString() {
-        return String.format("[%d] %s at %s (%s)", 
-            offerId, title, companyName, isOpen ? "Open" : "Closed");
-    }
-
-    public void setTags(List<String> tagsList) {
-        this.tags = tagsList;
+        return String.format("[%d] %s @ %s (%s)", offerId, title, companyName, isOpen ? "Open" : "Closed");
     }
 }

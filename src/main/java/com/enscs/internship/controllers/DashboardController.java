@@ -16,43 +16,34 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class DashboardController {
-    @FXML private Label welcomeLabel;
-    @FXML private Button postOfferButton;
+
+    @FXML private Label     welcomeLabel;
+    @FXML private Button    postOfferButton;
     @FXML private StackPane contentArea;
 
-    private AuthService authService;
+    private AuthService       authService;
     private InternshipService internshipService;
 
-    /**
-     * Initializes the dashboard with necessary services and user context.
-     */
     public void initData(AuthService authService, InternshipService internshipService) {
-        this.authService = authService;
+        this.authService       = authService;
         this.internshipService = internshipService;
-        
+
         User user = authService.getCurrentUser();
         welcomeLabel.setText("Welcome, " + user.getFirstName() + " " + user.getLastName());
 
-        // Role-based UI management
         boolean isSupervisor = (user instanceof Supervisor);
         postOfferButton.setVisible(isSupervisor);
         postOfferButton.setManaged(isSupervisor);
     }
 
-    /**
-     * Loads FXML from the /fxml/ directory and manages content switching.
-     */
     private FXMLLoader loadView(String fxmlName) {
         try {
-            // Path corrected to match your resources/fxml/ structure
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/" + fxmlName));
             Parent view = loader.load();
-            
             contentArea.getChildren().setAll(view);
             return loader;
         } catch (IOException e) {
             showError("Navigation Error", "Could not load: " + fxmlName, e.getMessage());
-            e.printStackTrace();
             return null;
         }
     }
@@ -68,44 +59,48 @@ public class DashboardController {
 
     @FXML
     public void handlePostOffer() {
-        FXMLLoader loader = loadView("post_offer_form.fxml");
+        FXMLLoader loader = loadView("post_offer.fxml");
         if (loader != null && authService.getCurrentUser() instanceof Supervisor) {
             PostOfferController controller = loader.getController();
-            // Pass both the service and the specific supervisor model
             controller.initData(internshipService, (Supervisor) authService.getCurrentUser());
         }
     }
 
+    /**
+     * FIX: was loading a non-existent "applications_list.fxml".
+     * Now routes by role:
+     *  - Student  → loads the offers_list panel (student sees their own apps via StudentDashboard)
+     *  - Supervisor → loads the ApplicationsController view
+     */
     @FXML
-public void handleViewApplications() {
-    try {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/applications_list.fxml"));
-        Parent view = loader.load();
-        
-        // Clear the current view and show the applications table
-        contentArea.getChildren().setAll(view);
-    } catch (IOException e) {
-        showError("UI Error", "Could not load applications list", e.getMessage());
+    public void handleViewApplications() {
+        User user = authService.getCurrentUser();
+        if (user instanceof Supervisor) {
+            // Supervisor: show the full applications management panel
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/applications_list.fxml"));
+                Parent view = loader.load();
+                contentArea.getChildren().setAll(view);
+            } catch (IOException e) {
+                showError("UI Error", "Could not load applications panel.", e.getMessage());
+            }
+        } else {
+            // Student: re-use the offers list (they track apps in StudentDashboard's second tab)
+            handleViewOffers();
+        }
     }
-}
 
     @FXML
     public void handleLogout() {
         try {
             authService.logout();
-
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/login.fxml"));
             Parent loginView = loader.load();
-
-            // Setup the login controller with the service again
             LoginController controller = loader.getController();
             controller.setAuthService(authService);
-
             Stage stage = (Stage) welcomeLabel.getScene().getWindow();
             stage.setScene(new Scene(loginView));
             stage.setTitle("ENSCS — Login");
-            stage.show();
-
         } catch (IOException e) {
             showError("Logout Error", "Failed to return to login screen.", e.getMessage());
         }
@@ -118,5 +113,4 @@ public void handleViewApplications() {
         alert.setContentText(content);
         alert.showAndWait();
     }
-    
 }

@@ -5,24 +5,26 @@
 <?import javafx.collections.FXCollections?>
 <?import java.lang.String?>
 
-<VBox alignment="CENTER" spacing="15.0" style="-fx-background-color: #f5f6fa;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.enscs.internship.controllers.RegisterController">
-    <padding>
-        <Insets bottom="30.0" left="50.0" right="50.0" top="30.0" />
-    </padding>
-    
-    <Label style="-fx-font-size: 26; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" text="Create ENSCS Account" />
-    
-    <GridPane vgap="10.0" hgap="10.0" maxWidth="450.0">
-        <TextField fx:id="firstNameField" promptText="First Name" GridPane.columnIndex="0" GridPane.rowIndex="0" prefHeight="40"/>
-        <TextField fx:id="lastNameField" promptText="Last Name" GridPane.columnIndex="1" GridPane.rowIndex="0" prefHeight="40"/>
-        
-        <TextField fx:id="usernameField" promptText="Username" GridPane.columnSpan="2" GridPane.rowIndex="1" prefHeight="40"/>
-        <TextField fx:id="emailField" promptText="Email (e.g. name@enscs.dz)" GridPane.columnSpan="2" GridPane.rowIndex="2" prefHeight="40"/>
-        
-        <PasswordField fx:id="passwordField" promptText="Password" GridPane.columnIndex="0" GridPane.rowIndex="3" prefHeight="40"/>
-        <PasswordField fx:id="confirmPasswordField" promptText="Confirm Password" GridPane.columnIndex="1" GridPane.rowIndex="3" prefHeight="40"/>
-        
-        <ComboBox fx:id="roleComboBox" promptText="I am a..." GridPane.columnSpan="2" GridPane.rowIndex="4" maxWidth="Infinity" prefHeight="40">
+<VBox alignment="CENTER" spacing="15.0" styleClass="main-bg" stylesheets="@../css/style.css"
+      xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" 
+      fx:controller="com.enscs.internship.controllers.RegisterController">
+    <padding><Insets bottom="30.0" left="50.0" right="50.0" top="30.0" /></padding>
+
+    <Label styleClass="title-label" text="Create ENSCS Account" />
+    <Label fx:id="errorLabel" style="-fx-text-fill: #ef4444; -fx-font-size: 13px;" wrapText="true" maxWidth="450.0" />
+
+    <GridPane vgap="12.0" hgap="12.0" maxWidth="480.0" styleClass="card" style="-fx-padding: 25;">
+        <columnConstraints>
+            <ColumnConstraints hgrow="ALWAYS" />
+            <ColumnConstraints hgrow="ALWAYS" />
+        </columnConstraints>
+        <TextField fx:id="firstNameField" promptText="First Name" prefHeight="40" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+        <TextField fx:id="lastNameField"  promptText="Last Name" prefHeight="40" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+        <TextField fx:id="usernameField" promptText="Username" prefHeight="40" GridPane.columnSpan="2" GridPane.rowIndex="1"/>
+        <TextField fx:id="emailField"    promptText="Email (e.g. name@enscs.dz)" prefHeight="40" GridPane.columnSpan="2" GridPane.rowIndex="2"/>
+        <PasswordField fx:id="passwordField" promptText="Password" prefHeight="40" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+        <PasswordField fx:id="confirmPasswordField" promptText="Confirm Password" prefHeight="40" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+        <ComboBox fx:id="roleComboBox" promptText="I am a…" maxWidth="Infinity" prefHeight="40" GridPane.columnSpan="2" GridPane.rowIndex="4">
             <items>
                 <FXCollections fx:factory="observableArrayList">
                     <String fx:value="Student" />
@@ -30,11 +32,9 @@
                 </FXCollections>
             </items>
         </ComboBox>
-
-        <TextField fx:id="extraInfoField" promptText="Major / Company Name" GridPane.columnSpan="2" GridPane.rowIndex="5" prefHeight="40"/>
+        <TextField fx:id="extraInfoField" promptText="Major / Company Name" prefHeight="40" GridPane.columnSpan="2" GridPane.rowIndex="5"/>
     </GridPane>
 
-    <Button onAction="#handleRegister" prefWidth="450.0" style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-size: 14; -fx-font-weight: bold; -fx-padding: 12;" text="Sign Up" />
-    
-    <Hyperlink onAction="#goToLogin" text="Already have an account? Login here" />
+    <Button onAction="#handleRegister" prefWidth="480.0" styleClass="btn-primary" style="-fx-padding: 12;" text="Sign Up" />
+    <Hyperlink onAction="#goToLogin" text="Already have an account? Login here" style="-fx-text-fill: #3b82f6;" />
 </VBox>

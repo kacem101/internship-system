@@ -7,93 +7,106 @@ import com.enscs.internship.services.SessionManager;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class PostOfferController {
+
     @FXML private TextField titleField;
     @FXML private TextField companyField;
-    @FXML private TextArea descriptionArea;
-    @FXML private TextArea requirementsArea; 
-    @FXML private TextField tagsField;
-    @FXML private Button submitButton;
+    @FXML private TextArea  descriptionArea;
+    @FXML private TextArea  requirementsArea;   // one requirement per line
+    @FXML private TextField tagsField;          // comma-separated tags
+    @FXML private Button    submitButton;
 
     private InternshipService internshipService;
-    private InternshipOffer existingOffer = null;
+    private InternshipOffer   existingOffer = null;
 
-    /**
-     * Initializes the dialog for a NEW offer
-     */
-    public void initData(InternshipService service, Supervisor supervisor) {  
-        this.internshipService = service; 
+    // ------------------------------------------------------------------ //
+    //  Init: CREATE mode                                                   //
+    // ------------------------------------------------------------------ //
+    public void initData(InternshipService service, Supervisor supervisor) {
+        this.internshipService = service;
         if (supervisor != null) {
             companyField.setText(supervisor.getCompanyName());
-            companyField.setEditable(false); 
+            companyField.setEditable(false);
+            companyField.setStyle("-fx-background-color: #eee;");
         }
     }
 
-    /**
-     * Initializes the dialog for EDITING an existing offer
-     */
+    // ------------------------------------------------------------------ //
+    //  Init: EDIT mode                                                     //
+    // ------------------------------------------------------------------ //
     public void initData(InternshipService service, InternshipOffer offer) {
         this.internshipService = service;
-        this.existingOffer = offer;
+        this.existingOffer     = offer;
 
         titleField.setText(offer.getTitle());
         companyField.setText(offer.getCompanyName());
         descriptionArea.setText(offer.getDescription());
-        
-        if (offer.getRequirements() != null) {
-            requirementsArea.setText(String.join("\n", offer.getRequirements()));
+
+        // FIX: guard against null lists that Gson may leave on old records
+        List<String> reqs = offer.getRequirements();
+        if (reqs != null && !reqs.isEmpty()) {
+            requirementsArea.setText(String.join("\n", reqs));
         }
-        
-        if (offer.getTags() != null) {
-            tagsField.setText(String.join(", ", offer.getTags()));
+
+        List<String> tags = offer.getTags();
+        if (tags != null && !tags.isEmpty()) {
+            tagsField.setText(String.join(", ", tags));
         }
 
         submitButton.setText("Update Offer");
     }
 
+    // ------------------------------------------------------------------ //
+    //  Submit                                                              //
+    // ------------------------------------------------------------------ //
     @FXML
     public void handleSubmit() {
-        String title = titleField.getText().trim();
+        String title       = titleField.getText().trim();
         String description = descriptionArea.getText().trim();
-        String company = companyField.getText().trim();
-        String rawRequirements = requirementsArea.getText().trim();
-        String rawTags = tagsField.getText().trim();
+        String company     = companyField.getText().trim();
+        String rawReqs     = requirementsArea.getText().trim();
+        String rawTags     = tagsField.getText().trim();
 
         if (title.isEmpty() || company.isEmpty()) {
-            showError("Input Error", "Title and Company Name are required fields.");
+            showError("Validation Error", "Title and Company are required.");
             return;
         }
 
-        List<String> requirementsList = Arrays.stream(rawRequirements.split("\n"))
+        // Each non-empty line → one requirement
+        List<String> requirementsList = Arrays.stream(rawReqs.split("\\r?\\n"))
                 .map(String::trim)
-                .filter(line -> !line.isEmpty())
+                .filter(s -> !s.isEmpty())
                 .collect(Collectors.toList());
 
+        // Comma-separated tags
         List<String> tagsList = Arrays.stream(rawTags.split(","))
                 .map(String::trim)
-                .filter(tag -> !tag.isEmpty())
+                .filter(s -> !s.isEmpty())
                 .collect(Collectors.toList());
 
         if (existingOffer != null) {
-            // UPDATE MODE
+            // --- UPDATE ---
             existingOffer.setTitle(title);
             existingOffer.setDescription(description);
             existingOffer.setCompanyName(company);
             existingOffer.setRequirements(requirementsList);
-            existingOffer.setTags(tagsList); 
-            
+            existingOffer.setTags(tagsList);
             SessionManager.getDataManager().saveData();
             showInfo("Success", "Offer updated successfully.");
         } else {
-            // CREATE MODE
-            InternshipOffer newOffer = new InternshipOffer(title, description, company, requirementsList, tagsList);
+            // --- CREATE ---
+            // Use the full constructor so both lists are properly assigned
+            InternshipOffer newOffer = new InternshipOffer(title, description, company,
+                                                           requirementsList, tagsList);
             internshipService.addOffer(newOffer);
-            showInfo("Success", "New offer posted.");
+            showInfo("Success", "New internship offer posted.");
         }
+
         handleCancel();
     }
 
@@ -103,19 +116,22 @@ public class PostOfferController {
         stage.close();
     }
 
+    // ------------------------------------------------------------------ //
+    //  Helpers                                                             //
+    // ------------------------------------------------------------------ //
     private void showInfo(String title, String content) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(content);
-        alert.showAndWait();
+        Alert a = new Alert(Alert.AlertType.INFORMATION);
+        a.setTitle(title);
+        a.setHeaderText(null);
+        a.setContentText(content);
+        a.showAndWait();
     }
 
     private void showError(String title, String content) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(content);
-        alert.showAndWait();
+        Alert a = new Alert(Alert.AlertType.ERROR);
+        a.setTitle(title);
+        a.setHeaderText(null);
+        a.setContentText(content);
+        a.showAndWait();
     }
 }

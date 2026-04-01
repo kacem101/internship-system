@@ -1,50 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.Font?>
 
-<VBox spacing="15.0" prefWidth="450.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.enscs.internship.controllers.PostOfferController">
-    <padding>
-        <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
-    </padding>
+<VBox spacing="20.0" prefWidth="480.0" styleClass="main-bg" stylesheets="@../css/style.css"
+      xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" 
+      fx:controller="com.enscs.internship.controllers.PostOfferController">
+    <padding><Insets bottom="30.0" left="30.0" right="30.0" top="30.0" /></padding>
     
-    <children>
-        <Label text="Post New Internship Offer">
-            <font>
-                <Font name="System Bold" size="20.0" />
-            </font>
-        </Label>
-        
-        <Separator />
+    <Label text="Post New Internship Offer" styleClass="title-label" />
+    <Separator />
 
+    <VBox spacing="15.0" styleClass="card" style="-fx-padding: 20;">
         <VBox spacing="5.0">
-            <Label text="Offer Title" style="-fx-text-fill: #555;" />
+            <Label text="Offer Title" styleClass="subtitle-label" />
             <TextField fx:id="titleField" promptText="e.g. Java Backend Intern" />
         </VBox>
+        <VBox spacing="5.0">
+            <Label text="Company" styleClass="subtitle-label" />
+            <TextField fx:id="companyField" editable="false" style="-fx-background-color: #f1f5f9;" />
+        </VBox>
+        <VBox spacing="5.0">
+            <Label text="Description" styleClass="subtitle-label" />
+            <TextArea fx:id="descriptionArea" prefHeight="120.0" wrapText="true" />
+        </VBox>
+        <VBox spacing="5.0">
+            <Label text="Requirements (Comma separated)" styleClass="subtitle-label" />
+            <TextArea fx:id="requirementsArea" prefHeight="100.0" />
+        </VBox>
+        <VBox spacing="5.0">
+            <Label text="Tags" styleClass="subtitle-label" />
+            <TextField fx:id="tagsField" promptText="e.g. Remote, Java, Security" />
+        </VBox>
+    </VBox>
 
-        <VBox spacing="5.0">
-            <Label text="Company" style="-fx-text-fill: #555;" />
-            <TextField fx:id="companyField" editable="false" style="-fx-background-color: #eee;" />
-        </VBox>
-
-        <VBox spacing="5.0">
-            <Label text="Description" style="-fx-text-fill: #555;" />
-            <TextArea fx:id="descriptionArea" prefHeight="100.0" promptText="Describe the roles and responsibilities..." wrapText="true" />
-        </VBox>
-
-        <VBox spacing="5.0">
-            <Label text="Requirements (Comma separated)" style="-fx-text-fill: #555;" />
-            <TextArea fx:id="requirementsArea" prefHeight="100.0" promptText="Enter requirements..." />
-        </VBox>
-        <VBox spacing="5.0">
-        <Label text="Tags (Comma separated)" style="-fx-text-fill: #555;" />
-        <TextField fx:id="tagsField" promptText="e.g. Remote, Java, Security" />
-        </VBox>
-        <HBox alignment="CENTER_RIGHT" spacing="10.0">
-    <Button onAction="#handleCancel" text="Cancel" style="-fx-background-color: #f44336; -fx-text-fill: white;" />
-    <Button fx:id="submitButton" onAction="#handleSubmit" text="Post Offer" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold;" />
+    <HBox alignment="CENTER_RIGHT" spacing="12.0">
+        <Button onAction="#handleCancel" text="Cancel" styleClass="btn-danger" style="-fx-background-color: #94a3b8;"/>
+        <Button fx:id="submitButton" onAction="#handleSubmit" text="Post Offer" styleClass="btn-primary" style="-fx-padding: 10 25;" />
     </HBox>
-    </children>
 </VBox>
