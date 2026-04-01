@@ -20,7 +20,7 @@ public class PostOfferController {
     @FXML private Button submitButton;
 
     private InternshipService internshipService;
-    private InternshipOffer existingOffer = null; // Track if we are editing
+    private InternshipOffer existingOffer = null;
 
     /**
      * Initializes the dialog for a NEW offer
@@ -29,18 +29,17 @@ public class PostOfferController {
         this.internshipService = service; 
         if (supervisor != null) {
             companyField.setText(supervisor.getCompanyName());
-            companyField.setEditable(false); // Supervisors usually shouldn't change company name
+            companyField.setEditable(false); 
         }
     }
 
     /**
-     * Overloaded method to initialize the dialog for EDITING an existing offer
+     * Initializes the dialog for EDITING an existing offer
      */
     public void initData(InternshipService service, InternshipOffer offer) {
         this.internshipService = service;
         this.existingOffer = offer;
 
-        // Pre-fill fields
         titleField.setText(offer.getTitle());
         companyField.setText(offer.getCompanyName());
         descriptionArea.setText(offer.getDescription());
@@ -85,10 +84,9 @@ public class PostOfferController {
             existingOffer.setDescription(description);
             existingOffer.setCompanyName(company);
             existingOffer.setRequirements(requirementsList);
-            // Ensure your InternshipOffer model has a setTags method
-            // existingOffer.setTags(tagsList); 
+            existingOffer.setTags(tagsList); 
             
-            SessionManager.getDataManager().saveData(); // Persist changes
+            SessionManager.getDataManager().saveData();
             showInfo("Success", "Offer updated successfully.");
         } else {
             // CREATE MODE
@@ -108,6 +106,7 @@ public class PostOfferController {
     private void showInfo(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
+        alert.setHeaderText(null);
         alert.setContentText(content);
         alert.showAndWait();
     }
@@ -115,6 +114,7 @@ public class PostOfferController {
     private void showError(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(title);
+        alert.setHeaderText(null);
         alert.setContentText(content);
         alert.showAndWait();
     }

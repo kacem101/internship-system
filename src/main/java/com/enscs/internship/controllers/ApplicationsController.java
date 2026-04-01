@@ -3,6 +3,7 @@ package com.enscs.internship.controllers;
 import com.enscs.internship.models.Application;
 import com.enscs.internship.models.InternshipOffer;
 import com.enscs.internship.models.Supervisor;
+import com.enscs.internship.models.ApplicationStatus;
 import com.enscs.internship.services.InternshipService;
 import com.enscs.internship.services.SessionManager;
 import javafx.beans.property.SimpleStringProperty;
@@ -22,7 +23,6 @@ public class ApplicationsController {
         this.service = new InternshipService(SessionManager.getDataManager());
         Supervisor current = (Supervisor) SessionManager.getUser();
 
-        // Column Setup
         studentCol.setCellValueFactory(data -> 
             new SimpleStringProperty(data.getValue().getStudentUsername()));
         
@@ -35,15 +35,12 @@ public class ApplicationsController {
         statusCol.setCellValueFactory(data -> 
             new SimpleStringProperty(data.getValue().getStatus().toString()));
 
-        // The call that was causing the error
         if (current != null) {
             loadApplications(current.getCompanyName());
         }
     }
 
-    // --- ADD THIS METHOD TO FIX THE ERROR ---
     private void loadApplications(String companyName) {
-        // Fetches the applications from the service and updates the table
         appTable.setItems(FXCollections.observableArrayList(
             service.getApplicationsForSupervisor(companyName)
         ));
@@ -51,19 +48,18 @@ public class ApplicationsController {
 
     @FXML
     private void handleAccept() {
-        updateStatus("ACCEPTED");
+        updateStatus(ApplicationStatus.ACCEPTED);
     }
 
     @FXML
     private void handleReject() {
-        updateStatus("REJECTED");
+        updateStatus(ApplicationStatus.REJECTED);
     }
 
-    private void updateStatus(String statusStr) {
+    private void updateStatus(ApplicationStatus status) {
         Application selected = appTable.getSelectionModel().getSelectedItem();
         if (selected != null) {
-            // Convert String back to Enum
-            selected.setStatus(com.enscs.internship.models.ApplicationStatus.valueOf(statusStr));
+            selected.setStatus(status);
             SessionManager.getDataManager().saveData(); 
             appTable.refresh();
         }

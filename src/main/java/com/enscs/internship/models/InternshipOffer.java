@@ -91,4 +91,8 @@ public class InternshipOffer {
         return String.format("[%d] %s at %s (%s)", 
             offerId, title, companyName, isOpen ? "Open" : "Closed");
     }
+
+    public void setTags(List<String> tagsList) {
+        this.tags = tagsList;
+    }
 }
