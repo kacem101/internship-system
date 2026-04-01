@@ -1,0 +1,25 @@
+# Java/Maven build output
+target/
+*.class
+
+# IDE specific files
+.vscode/
+.settings/
+.project
+.classpath
+.factorypath
+.idea/
+*.iml
+*.iws
+
+# Log files
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Local data (Optional)
+# If your JSON/Database files in this folder are for testing only 
+# and you don't want them shared, uncomment the line below:
+# src/main/resources/data/
