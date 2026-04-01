@@ -38,10 +38,13 @@
             <Label text="Requirements (Comma separated)" style="-fx-text-fill: #555;" />
             <TextArea fx:id="requirementsArea" prefHeight="100.0" promptText="Enter requirements..." />
         </VBox>
-
+        <VBox spacing="5.0">
+        <Label text="Tags (Comma separated)" style="-fx-text-fill: #555;" />
+        <TextField fx:id="tagsField" promptText="e.g. Remote, Java, Security" />
+        </VBox>
         <HBox alignment="CENTER_RIGHT" spacing="10.0">
-            <Button onAction="#handleCancel" text="Cancel" style="-fx-background-color: #f44336; -fx-text-fill: white;" />
-            <Button onAction="#handleSubmit" text="Post Offer" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold;" />
-        </HBox>
+    <Button onAction="#handleCancel" text="Cancel" style="-fx-background-color: #f44336; -fx-text-fill: white;" />
+    <Button fx:id="submitButton" onAction="#handleSubmit" text="Post Offer" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold;" />
+    </HBox>
     </children>
 </VBox>

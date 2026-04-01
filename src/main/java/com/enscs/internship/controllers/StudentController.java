@@ -68,22 +68,51 @@ public class StudentController implements Initializable {
     }
 
     @FXML
-    public void handleApply() {
-        InternshipOffer selected = offersTable.getSelectionModel().getSelectedItem();
-        Student currentStudent = (Student) SessionManager.getUser();
+private void handleApply() {
+    // 1. Get the selected offer from your UI (ListView or TableView)
+    InternshipOffer selectedOffer = offersTable.getSelectionModel().getSelectedItem();
 
-        if (selected != null && currentStudent != null) {
-            try {
-                internshipService.apply(currentStudent, selected);
-                showAlert(Alert.AlertType.INFORMATION, "Success", "Application submitted for " + selected.getTitle());
-                loadApplicationStatuses(); // Refresh status list
-            } catch (InternshipException e) {
-                showAlert(Alert.AlertType.ERROR, "Application Error", e.getMessage());
-            }
-        }
+    if (selectedOffer == null) {
+        showError("No Selection", "Please select an internship offer first.");
+        return;
     }
 
-    public void loadApplicationStatuses() {
+    // 2. Get current student (assuming you have a SessionManager)
+    Student currentStudent = (Student) SessionManager.getUser();
+
+    // 3. Create the Application object
+    // Assuming Application constructor: (String studentUsername, int offerId)
+    Application newApplication = new Application(
+        currentStudent.getUsername(), 
+        selectedOffer.getOfferId()
+    );
+
+    // 4. Check if already applied (Optional but recommended)
+    boolean alreadyApplied = SessionManager.getDataManager().getApplications().stream()
+            .anyMatch(a -> a.getStudentUsername().equals(currentStudent.getUsername()) 
+                      && a.getOfferId() == selectedOffer.getOfferId());
+
+    if (alreadyApplied) {
+        showError("Already Applied", "You have already submitted an application for this position.");
+        return;
+    }
+
+    // 5. Save the application
+    SessionManager.getDataManager().getApplications().add(newApplication);
+    SessionManager.getDataManager().saveData(); // Persist to JSON/File
+
+    showInfo("Success", "Your application for " + selectedOffer.getTitle() + " has been sent!");
+}
+
+    private void showInfo(String string, String string2) {
+		showAlert(Alert.AlertType.INFORMATION, string, string2);
+	}
+
+	private void showError(String string, String string2) {
+		showAlert(Alert.AlertType.ERROR, string, string2);
+	}
+
+	public void loadApplicationStatuses() {
         Student current = (Student) SessionManager.getUser();
         if (current != null && statusTable != null) {
             List<Application> myApps = internshipService.getStudentApplications(current.getUsername());
@@ -110,4 +139,5 @@ public class StudentController implements Initializable {
         alert.setContentText(content);
         alert.showAndWait();
     }
+    
 }

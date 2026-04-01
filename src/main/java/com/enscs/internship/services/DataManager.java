@@ -152,4 +152,11 @@ public class DataManager {
         }
     }
     }
+
+    public InternshipOffer getOfferById(int offerId) {
+        return offers.stream()
+                .filter(o -> o.getOfferId() == offerId)
+                .findFirst()
+                .orElse(null);
+    }
 }

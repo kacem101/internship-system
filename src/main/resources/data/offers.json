@@ -18,5 +18,50 @@
       "sss,kkk,iii"
     ],
     "isOpen": true
+  },
+  {
+    "offerId": 8807,
+    "title": "aaaa",
+    "description": "aaa",
+    "companyName": "ss",
+    "requirements": [
+      "aa"
+    ],
+    "isOpen": false,
+    "tags": [
+      "remote",
+      "java",
+      "c++"
+    ]
+  },
+  {
+    "offerId": 4255,
+    "title": "test",
+    "description": "asasas",
+    "companyName": "ss",
+    "requirements": [
+      "asasasa"
+    ],
+    "isOpen": false,
+    "tags": [
+      "www",
+      "kkk",
+      "lll"
+    ]
+  },
+  {
+    "offerId": 9153,
+    "title": "asasas",
+    "description": "asasas",
+    "companyName": "ss",
+    "requirements": [
+      "asasa"
+    ],
+    "isOpen": false,
+    "tags": [
+      "aaa",
+      "bbb",
+      "ggg"
+    ]
   }
 ]

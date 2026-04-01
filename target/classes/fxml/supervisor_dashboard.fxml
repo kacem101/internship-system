@@ -12,36 +12,58 @@
             </Label>
             <Label text="Control Panel" textFill="#bdc3c7" />
             <Separator prefWidth="200.0" style="-fx-padding: 15 0;" />
-            <Button maxWidth="Infinity" style="-fx-background-color: transparent; -fx-alignment: CENTER_LEFT;" text="📁 Manage Offers" textFill="WHITE" />
-            <Button maxWidth="Infinity" style="-fx-background-color: transparent; -fx-alignment: CENTER_LEFT;" text="👥 Applicants" textFill="WHITE" />
+            
+            <Button fx:id="btnManageOffers" onAction="#showOffersView" maxWidth="Infinity" style="-fx-background-color: transparent; -fx-alignment: CENTER_LEFT;" text="📁 Manage Offers" textFill="WHITE" />
+            <Button fx:id="btnApplicants" onAction="#showApplicantsView" maxWidth="Infinity" style="-fx-background-color: transparent; -fx-alignment: CENTER_LEFT;" text="👥 Applicants" textFill="WHITE" />
+            
             <Region VBox.vgrow="ALWAYS" />
             <Button onAction="#handleLogout" maxWidth="Infinity" style="-fx-background-color: #e74c3c;" text="Logout" textFill="WHITE" />
          </children>
       </VBox>
 
-      <VBox HBox.hgrow="ALWAYS" style="-fx-padding: 30; -fx-background-color: #f4f7f6;">
+      <StackPane HBox.hgrow="ALWAYS">
          <children>
-            <HBox alignment="CENTER_LEFT" spacing="15">
+            <VBox fx:id="offersView" style="-fx-padding: 30; -fx-background-color: #f4f7f6;">
                <children>
-                  <VBox>
+                  <HBox alignment="CENTER_LEFT" spacing="15">
                      <children>
-                        <Label text="Internship Listings" style="-fx-font-weight: bold;">
-                           <font><Font size="26.0" /></font>
-                        </Label>
-                        <Label text="View and manage current postings" textFill="#7f8c8d" />
+                        <VBox>
+                           <children>
+                              <Label text="Internship Listings" style="-fx-font-weight: bold;"><font><Font size="26.0" /></font></Label>
+                              <Label text="View and manage current postings" textFill="#7f8c8d" />
+                           </children>
+                        </VBox>
+                        <Region HBox.hgrow="ALWAYS" />
+                        <TextField fx:id="searchField" prefWidth="200.0" promptText="Search..." style="-fx-background-radius: 15;" />
+                        <ComboBox fx:id="filterComboBox" onAction="#handleFilterChange" prefWidth="150.0" />
+                        <Button onAction="#showAddOfferDialog" style="-fx-background-color: #27ae60;" text="+ Create" textFill="WHITE" />
                      </children>
-                  </VBox>
-                  <Region HBox.hgrow="ALWAYS" />
-                  <TextField fx:id="searchField" onKeyReleased="#handleSearch" prefWidth="200.0" promptText="Search title/company..." style="-fx-background-radius: 15;" />
-                  <ComboBox fx:id="filterComboBox" onAction="#handleFilterChange" prefWidth="150.0" promptText="Filter view" />
-                  <Button onAction="#showAddOfferDialog" style="-fx-background-color: #27ae60; -fx-background-radius: 5;" text="+ Create Offer" textFill="WHITE">
-                     <font><Font name="System Bold" size="13.0" /></font>
-                  </Button>
+                  </HBox>
+                  <ListView fx:id="offersListView" VBox.vgrow="ALWAYS" style="-fx-background-radius: 10; -fx-border-color: #dcdde1; -fx-margin-top: 20;" />
+                  <HBox spacing="10" style="-fx-padding: 10 0 0 0;">
+                      <Button onAction="#handleEditOffer" text="Edit Selected" style="-fx-background-color: #3498db; -fx-text-fill: white;"/>
+                  </HBox>
                </children>
-            </HBox>
-            
-            <ListView fx:id="offersListView" VBox.vgrow="ALWAYS" style="-fx-background-radius: 10; -fx-margin-top: 20; -fx-border-color: #dcdde1;" />
+            </VBox>
+
+            <VBox fx:id="applicantsView" visible="false" style="-fx-padding: 30; -fx-background-color: #f4f7f6;">
+               <children>
+                  <Label text="Incoming Applications" style="-fx-font-weight: bold;"><font><Font size="26.0" /></font></Label>
+                  <TableView fx:id="applicationsTable" VBox.vgrow="ALWAYS" style="-fx-background-radius: 10;">
+                    <columns>
+                      <TableColumn fx:id="colStudent" prefWidth="150" text="Student Username" />
+                      <TableColumn fx:id="colOfferId" prefWidth="100" text="Offer ID" />
+                      <TableColumn fx:id="colDate" prefWidth="150" text="Date Applied" />
+                      <TableColumn fx:id="colStatus" prefWidth="100" text="Status" />
+                    </columns>
+                  </TableView>
+                  <HBox spacing="15" style="-fx-padding: 20 0 0 0;">
+                      <Button onAction="#handleApprove" prefWidth="120" style="-fx-background-color: #27ae60;" text="Approve" textFill="WHITE" />
+                      <Button onAction="#handleReject" prefWidth="120" style="-fx-background-color: #e74c3c;" text="Reject" textFill="WHITE" />
+                  </HBox>
+               </children>
+            </VBox>
          </children>
-      </VBox>
+      </StackPane>
    </children>
 </HBox>

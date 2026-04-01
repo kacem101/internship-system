@@ -24,5 +24,5 @@ public class Application {
     public String getStudentUsername() { return studentUsername; }
     public int getOfferId() { return offerId; }
     public ApplicationStatus getStatus() { return status; }
-    public void setStatus(ApplicationStatus status) { this.status = status; }
+    public void setStatus(ApplicationStatus status2) { this.status = status2; }
 }

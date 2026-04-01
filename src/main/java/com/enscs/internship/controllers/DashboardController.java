@@ -118,4 +118,5 @@ public void handleViewApplications() {
         alert.setContentText(content);
         alert.showAndWait();
     }
+    
 }

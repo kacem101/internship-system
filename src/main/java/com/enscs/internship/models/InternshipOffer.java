@@ -2,6 +2,7 @@ package com.enscs.internship.models;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class InternshipOffer {
     private static int OfferIdGenerator = 1; // Start IDs at 1
@@ -11,7 +12,7 @@ public class InternshipOffer {
     private String companyName;
     private List<String> requirements;
     private boolean isOpen;
-
+    private List<String> tags;
     /**
      * 1. NO-ARGS CONSTRUCTOR
      * Required by Gson to reconstruct objects from JSON without crashing.
@@ -32,7 +33,18 @@ public class InternshipOffer {
         this.description = description;
         this.companyName = companyName;
     }
+    public InternshipOffer(String title, String description, String company, 
+                           List<String> requirements, List<String> tags) {
+        this.offerId = new Random().nextInt(10000);
+        this.title = title;
+        this.description = description;
+        this.companyName = company;
+        this.requirements = requirements;
+        this.tags = tags;
+    }
 
+    // Add Getters and Setters for tags
+    public List<String> getTags() { return tags; }
     /**
      * 3. FULL CONSTRUCTOR (With requirements)
      * Useful if you want to pass a pre-made list of strings.

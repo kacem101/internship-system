@@ -20,5 +20,16 @@
     "email": "ss",
     "password": "$2a$10$ylDWQveiKoX56scQvHMYVeE3kCCBN.9njUL5V8iDI2E7cFwLDcUpe",
     "type": "Supervisor"
+  },
+  {
+    "major": "aaa",
+    "applications": [],
+    "app_id": 8228,
+    "first_name": "aaa",
+    "last_name": "aaa",
+    "username": "aaa",
+    "email": "aaa",
+    "password": "$2a$10$ITXeq2hRfRiqmZxuEbc/TOyB0ow6Ca/YY4pR7OK1vn9I3TZnxFEUK",
+    "type": "Student"
   }
 ]
